@@ -52,8 +52,6 @@ func TestNewLoggingClient(t *testing.T) {
 		return
 	}
 	defer resp.Body.Close()
-
-	fmt.Println("Request sent and logged successfully.")
 }
 
 func TestNewLoggingClientWithBadURL(t *testing.T) {

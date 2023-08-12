@@ -97,7 +97,6 @@ func (c *ClientLogger) sendToRabbitMQ(logData LogData) {
 			Body:        jsonData,
 		},
 	)
-	fmt.Printf("pushed data: %v\n", logData)
 
 	if err != nil {
 		fmt.Printf("Error sending log data to RabbitMQ: %v\n", err)
