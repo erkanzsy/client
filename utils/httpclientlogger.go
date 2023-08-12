@@ -40,15 +40,6 @@ func (cl *ClientLogger) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	resp, err := cl.Transport.RoundTrip(req)
 
-	fmt.Println("Request URL: ", req.URL.String())
-	fmt.Println("Request Method: ", req.Method)
-	fmt.Println("Response Status: ", resp.Status)
-	fmt.Println("Response Headers: ", resp.Header)
-	fmt.Println("Response Body: ", resp.Body)
-	fmt.Println("Response Error: ", err)
-	fmt.Println("Request Headers: ", req.Header)
-	fmt.Println("Request Body: ", req.Body)
-
 	endTime := time.Now()
 	elapsedTime := endTime.Sub(startTime)
 
@@ -57,6 +48,7 @@ func (cl *ClientLogger) RoundTrip(req *http.Request) (*http.Response, error) {
 		RequestMethod:  req.Method,
 		ResponseTime:   elapsedTime,
 		RequestHeaders: req.Header,
+		RequestBody:    getRequestBody(req),
 	}
 
 	if err != nil {
@@ -110,4 +102,22 @@ func (c *ClientLogger) sendToRabbitMQ(logData LogData) {
 	if err != nil {
 		fmt.Printf("Error sending log data to RabbitMQ: %v\n", err)
 	}
+}
+
+func getRequestBody(r *http.Request) string {
+	if r.Method == http.MethodPost || r.Method == http.MethodPut {
+		if r.ContentLength > 0 {
+			body, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				return ""
+			}
+			defer r.Body.Close()
+
+			return string(body)
+		} else {
+			return ""
+		}
+	}
+
+	return ""
 }
