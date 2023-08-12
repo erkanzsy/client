@@ -110,11 +110,8 @@ func getRequestBody(r *http.Request) string {
 			if err != nil {
 				return ""
 			}
-			defer r.Body.Close()
 
 			return string(body)
-		} else {
-			return ""
 		}
 	}
 
